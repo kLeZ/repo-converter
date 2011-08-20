@@ -1,0 +1,54 @@
+[Buildset]
+BuildItems=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x01\x00\x00\x00\x1c\x00r\x00e\x00p\x00o\x00-\x00c\x00o\x00n\x00v\x00e\x00r\x00t\x00e\x00r)
+
+[CMake]
+BuildDirs=/home/kLeZ-hAcK/projects/repo-converter/build
+CMakeDir=/usr/share/cmake/Modules
+Current CMake Binary=file:///usr/bin/cmake
+CurrentBuildDir=file:///home/kLeZ-hAcK/projects/repo-converter/build
+CurrentBuildType=Debug
+CurrentInstallDir=file:///home/kLeZ-hAcK/bin/
+Extra Arguments=
+ProjectRootRelative=./
+
+[Launch]
+Launch Configurations=Launch Configuration 0,Launch Configuration 1
+
+[Launch][Launch Configuration 0]
+Configured Launch Modes=execute
+Configured Launchers=nativeAppLauncher
+Name=repo-converter
+Type=Native Application
+
+[Launch][Launch Configuration 0][Data]
+Arguments=-f /home/kLeZ-hAcK/repositories.repo -c 11.3 -n 11.4
+Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x02\x00\x00\x00\x1c\x00r\x00e\x00p\x00o\x00-\x00c\x00o\x00n\x00v\x00e\x00r\x00t\x00e\x00r\x00\x00\x00\x1c\x00r\x00e\x00p\x00o\x00-\x00c\x00o\x00n\x00v\x00e\x00r\x00t\x00e\x00r)
+Dependency Action=Build
+EnvironmentGroup=default
+Executable=
+External Terminal=konsole --noclose --workdir %workdir -e %exe
+Project Target=repo-converter,repo-converter
+Use External Terminal=false
+Working Directory=
+isExecutable=false
+
+[Launch][Launch Configuration 1]
+Configured Launch Modes=execute
+Configured Launchers=nativeAppLauncher
+Name=repo-converter-konsole
+Type=Native Application
+
+[Launch][Launch Configuration 1][Data]
+Arguments=-f /home/kLeZ-hAcK/repositories.repo -c 11.3 -n 11.4
+Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
+Dependency Action=Build
+EnvironmentGroup=default
+Executable=
+External Terminal=konsole --noclose --workdir %workdir -e %exe
+Project Target=repo-converter,repo-converter
+Use External Terminal=true
+Working Directory=
+isExecutable=false
+
+[Project]
+VersionControlSupport=kdevgit

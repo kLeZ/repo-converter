@@ -1,7 +1,0 @@
-project(repo-converter)
-
-add_executable(repo-converter anyoption.cpp utils.cpp repository.cpp main.cpp)
-
-
-
-

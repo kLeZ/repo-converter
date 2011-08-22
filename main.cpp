@@ -69,6 +69,7 @@ int main(int argc, char **argv)
 							URI newuri = URI(newurl);
 
 							cout << "Checking new version url '" << newuri.toString() << "'...";
+
 							if(Utils::isValid(newuri))
 							{
 								cout << "Next version url is valid, so can add the repository\n";
@@ -97,11 +98,8 @@ int main(int argc, char **argv)
 						{
 							newrepo << repocontent;
 							newrepo.close();
-						
-					else
-					{
-						cout 
-					}	cout << "Congratulations! All done, now exiting...\n";
+
+							cout << "Congratulations! All done, now exiting...\n";
 						}
 						else cout << "Unable to open file";
 					}

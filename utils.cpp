@@ -118,9 +118,31 @@ vector< Repository > Utils::getRepositories(File *repo)
 	return *ret;
 }
 
-bool Utils::isValid(URI *uri)
+void Utils::curlInit()
+{
+	curl_global_init(CURL_GLOBAL_ALL);
+}
+
+
+bool Utils::isValid(URI uri)
 {
 	bool ret = false;
+	int retcode = -1;
 	CURL *curl = curl_easy_init();
+
+	curl_easy_setopt(curl, CURLOPT_HEADER, 1) ;
+	curl_easy_setopt(curl, CURLOPT_NOBODY, 1) ;
+	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1) ;
+	curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 10) ;
+
+	// suppress all output by sending it to the null device
+	FILE *null_device = std::fopen("/dev/null", "w") ;
+	curl_easy_setopt(curl, CURLOPT_WRITEDATA, null_device) ;
+
+
+	curl_easy_setopt(curl, CURLOPT_URL, uri.toString().c_str());
+	retcode = curl_easy_perform(curl);
+	ret = retcode == 0;
+	curl_easy_cleanup(curl);
 	return ret;
 }

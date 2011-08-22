@@ -38,11 +38,11 @@ namespace freax
 		{
 			public:
 				static string convertBool(bool b);
-				static string convertInt(int i);
 				static AnyOption *initOptions(int argc, char **argv);
 				static void initUsage(AnyOption *options);
 				static vector<Repository> getRepositories(File *repo);
-				static bool isValid(URI *uri);
+				static bool isValid(URI uri);
+				static void curlInit();
 		};
 
 	}

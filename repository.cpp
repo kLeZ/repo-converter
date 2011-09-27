@@ -1,19 +1,19 @@
 /*
-    Repository class that represents a repository section in the .repo file
-    Copyright (C) 2011  Alessandro Accardo <julius8774@gmail.com>
+  Repository class that represents a repository section in the .repo file
+  Copyright (C) 2011 Alessandro Accardo <julius8774@gmail.com>
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "repository.h"
@@ -118,7 +118,8 @@ void Repository::setType(string type)
 
 string Repository::toString()
 {
-	string builder = "";
+	Utils utils;
+	string builder;
 	builder.append("[");
 	builder.append(this->title);
 	builder.append("]");
@@ -127,10 +128,10 @@ string Repository::toString()
 	builder.append(this->name);
 	builder.append("\n");
 	builder.append("enabled=");
-	builder.append(Utils::convertBool(this->enabled));
+	builder.append(utils.convertBool(this->enabled));
 	builder.append("\n");
 	builder.append("autorefresh=");
-	builder.append(Utils::convertBool(this->autorefresh));
+	builder.append(utils.convertBool(this->autorefresh));
 	builder.append("\n");
 	builder.append("baseurl=");
 	builder.append(this->baseurl.toString());
@@ -142,10 +143,10 @@ string Repository::toString()
 	builder.append(this->type);
 	builder.append("\n");
 	builder.append("keeppackages=");
-	builder.append(Utils::convertBool(this->keeppackages));
+	builder.append(utils.convertBool(this->keeppackages));
 	builder.append("\n");
 	builder.append("gpgcheck=");
-	builder.append(Utils::convertBool(this->gpgcheck));
+	builder.append(utils.convertBool(this->gpgcheck));
 	builder.append("\n");
 	return builder;
 }

@@ -21,12 +21,14 @@
 #define FREAX_LIBZYPP_UTILS_H
 
 #include <string>
-#include <iostream>
+#include <fstream>
+#include <sstream>
 #include <Poco/File.h>
 #include <curl/curl.h>
+#include <stdlib.h>
 
-#include "anyoption.h"
 #include "repository.h"
+
 
 namespace freax
 {
@@ -37,16 +39,15 @@ namespace freax
 		class Utils
 		{
 			public:
-				static string convertBool(bool b);
-				static AnyOption *initOptions(int argc, char **argv);
-				static void initUsage(AnyOption *options);
-				static vector<Repository> getRepositories(File *repo);
-				static bool isValid(URI uri);
-				static void curlInit();
+				bool debug;
+				string convertBool(bool b);
+				vector<Repository> *getRepositories(File *repo);
+				bool isValid(URI uri);
+				void curlInit();
+				string itos(int i);
 		};
-
 	}
-
 }
+
 
 #endif // FREAX_LIBZYPP_UTILS_H

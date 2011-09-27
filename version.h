@@ -15,22 +15,28 @@ class Version
 		static const int MAJOR_VERSION = 0;
 		static const int MINOR_VERSION = 1;
 		static const int PATCH_VERSION = 0;
-		static string getVersionString();
-};
+		void printVersion();
+		string getVersionString();
+} version;
+
+void Version::printVersion()
+{
+	cout << version.getVersionString() << "\n";
+}
 
 string Version::getVersionString()
 {
-	string ret;
-	string __maj;
-	string __min;
-	string __pat;
+	Utils utils;
+	string ret, __maj, __min, __pat, execname;
+	char* execlnk;
 
-	char* execname;
+	__maj = utils.itos(MAJOR_VERSION);
+	__min = utils.itos(MINOR_VERSION);
+	__pat = utils.itos(PATCH_VERSION);
+	File comm = File("/proc/self/comm");
+	ifstream scanner(comm.path().c_str(), _S_out);
+	getline(scanner, execname);
 
-	__maj = Utils::itos(MAJOR_VERSION);
-	__min = Utils::itos(MINOR_VERSION);
-	__pat = Utils::itos(PATCH_VERSION);
-	readlink("/proc/self/exe", execname, 50);
 	ret = ret.append(execname).append(" ");
 	ret = ret.append(__maj).append(".").append(__min).append(".").append(__pat);
 	return ret;

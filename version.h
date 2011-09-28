@@ -1,7 +1,11 @@
 #ifndef VERSION_H
 #define VERSION_H
 
-#include <string>
+#include <ios>
+#include <sstream>
+#include <fstream>
+#include <iostream>
+#include <Poco/File.h>
 
 #include "utils.h"
 
@@ -21,7 +25,7 @@ class Version
 
 void Version::printVersion()
 {
-	cout << version.getVersionString() << "\n";
+	cout << version.getVersionString() << endl;
 }
 
 string Version::getVersionString()
@@ -33,8 +37,8 @@ string Version::getVersionString()
 	__maj = utils.itos(MAJOR_VERSION);
 	__min = utils.itos(MINOR_VERSION);
 	__pat = utils.itos(PATCH_VERSION);
-	File comm = File("/proc/self/comm");
-	ifstream scanner(comm.path().c_str(), _S_out);
+	File comm("/proc/self/comm");
+	ifstream scanner(comm.path().c_str(), ios::out);
 	getline(scanner, execname);
 
 	ret = ret.append(execname).append(" ");

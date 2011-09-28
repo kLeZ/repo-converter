@@ -17,6 +17,14 @@
 */
 
 
+#include <ios>
+#include <sstream>
+#include <fstream>
+#include <iostream>
+#include <stdlib.h>
+#include <curl/curl.h>
+#include <Poco/File.h>
+
 #include "utils.h"
 
 using namespace freax::libzypp;
@@ -30,21 +38,28 @@ vector<Repository> *Utils::getRepositories(File *repo)
 {
 	vector<Repository> *ret = new vector<Repository>();
 
-	ifstream scanner(repo->path().c_str(), ios::out);
+	ifstream scanner(repo->path().c_str(), ios::in);
+
+	if(debug) std::cout << "Scanner status: " << scanner.is_open() << endl;
+
 	string line;
 	Repository *current = NULL;
 
 	while(getline(scanner, line))
 	{
-		if (debug) cout << line << endl;
+		if(debug) std::cout << line << endl;
 
 		if(line[0] == '[')
 		{
 			line = line.substr(1, line.size() - 2);
 
+			if(debug) std::cout << "Trimmed title: " << line << endl;
+
 			if(current)
 			{
 				ret->push_back(*current);
+
+				if(debug) std::cout << "Elements are now " << ret->size() << "\n" << "Just pushed:\n" << current->toString() << endl;
 			}
 
 			current = new Repository(line);
@@ -55,6 +70,8 @@ vector<Repository> *Utils::getRepositories(File *repo)
 			string key, value;
 			key = line.substr(0, eqIndex);
 			value = line.substr(eqIndex + 1);
+
+			if(debug) std::cout << "Key is " << key << " and value is " << value << endl;
 
 			if(key == "name")
 			{
@@ -106,17 +123,19 @@ bool Utils::isValid(URI uri)
 	int retcode = -1;
 	CURL *curl = curl_easy_init();
 
-	curl_easy_setopt(curl, CURLOPT_HEADER, 1) ;
-	curl_easy_setopt(curl, CURLOPT_NOBODY, 1) ;
-	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1) ;
-	curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 10) ;
+	curl_easy_setopt(curl, CURLOPT_HEADER, 1);
+	curl_easy_setopt(curl, CURLOPT_NOBODY, 1);
+	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+	curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 10);
 
 	// suppress all output by sending it to the null device
-	FILE *null_device = std::fopen("/dev/null", "w") ;
-	curl_easy_setopt(curl, CURLOPT_WRITEDATA, null_device) ;
+	if(!debug) curl_easy_setopt(curl, CURLOPT_WRITEDATA, fopen("/dev/null", "w"));
 
 
 	curl_easy_setopt(curl, CURLOPT_URL, uri.toString().c_str());
+
+	if(verbose) curl_easy_setopt(curl, CURLOPT_VERBOSE, true);
+
 	retcode = curl_easy_perform(curl);
 	ret = retcode == 0;
 	curl_easy_cleanup(curl);
@@ -129,4 +148,30 @@ string Utils::itos(int i)
 	ss << i;
 	string ret = ss.str();
 	return ret;
+}
+
+URI Utils::changeVersionUrl(URI current, string curr_ver, string next_ver)
+{
+	string newurl = current.toString();
+	newurl = changeVersionToken(newurl, curr_ver, next_ver);
+	URI newuri = URI(newurl);
+	return newuri;
+}
+
+string Utils::changeVersionToken(string current, string curr_ver, string next_ver)
+{
+	string newurl = current;
+
+	if(debug) std::cout << "Replacing version in url '" << newurl << "'" << std::endl;
+
+	int fndidx = newurl.find(curr_ver);
+
+	if(debug) std::cout << "Version token found at " << fndidx << std::endl;
+
+	if(fndidx > 0 && fndidx < newurl.size())
+		newurl = newurl.replace(fndidx, curr_ver.size(), next_ver);
+
+	if(debug) std::cout << "Replaced url will be '" << newurl << "'" << std::endl;
+
+	return newurl;
 }

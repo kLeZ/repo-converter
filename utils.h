@@ -20,12 +20,6 @@
 #ifndef FREAX_LIBZYPP_UTILS_H
 #define FREAX_LIBZYPP_UTILS_H
 
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <Poco/File.h>
-#include <curl/curl.h>
-#include <stdlib.h>
 
 #include "repository.h"
 
@@ -40,9 +34,12 @@ namespace freax
 		{
 			public:
 				bool debug;
+				bool verbose;
 				string convertBool(bool b);
 				vector<Repository> *getRepositories(File *repo);
 				bool isValid(URI uri);
+				URI changeVersionUrl(URI current, string curr_ver, string next_ver);
+				string changeVersionToken(string current, string curr_ver, string next_ver);
 				void curlInit();
 				string itos(int i);
 		};

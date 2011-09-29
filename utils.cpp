@@ -38,9 +38,9 @@ vector<Repository> *Utils::getRepositories(File *repo)
 {
 	vector<Repository> *ret = new vector<Repository>();
 
-	ifstream scanner(repo->path().c_str(), ios::in);
+	ifstream scanner(repo->path().c_str());
 
-	if(debug) std::cout << "Scanner status: " << scanner.is_open() << endl;
+	if(debug) std::cout << "Scanner status: " << scanner.is_open() << std::endl;
 
 	string line;
 	Repository *current = NULL;

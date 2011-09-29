@@ -166,7 +166,7 @@ int main(int argc, char **argv)
 								else
 								{
 									if(utils.verbose)
-										cout << "Current url seems not to be valid, am I wrong in something?" << endl;
+										std::cerr << "Current url seems not to be valid, am I wrong in something?" << endl;
 								}
 							}
 							else
@@ -186,37 +186,46 @@ int main(int argc, char **argv)
 						{
 							if(!repocontent.empty())
 							{
-								if(utils.verbose)
-									cout << "Writing the new repository file" << endl;
+								string bakpath = path;
+								bakpath.append("~");
+								repo->renameTo(bakpath);
+								delete repo;
 
-								repo->renameTo(path.append("~"));
+								if(utils.verbose) cout << "Writing the new repository file to " << path << endl;
+
 								ofstream newrepo(path.c_str());
+
+								if (utils.debug) cout << "New repo file status: " << newrepo.is_open() << endl;
 
 								if(newrepo.is_open())
 								{
-									newrepo << repocontent;
+									if (utils.debug) cout << "Number of characters of repocontent: " << repocontent.size() << endl;
+
+									newrepo << repocontent << endl;
+									newrepo.flush();
+									if (utils.debug) cout << "newrepo stream is bad: " << newrepo.bad() << endl;
 									newrepo.close();
 
 									if(utils.verbose) cout << "Congratulations! All done, now exiting..." << endl;
 								}
 								else
 								{
-									cout << "Unable to open file";
+									std::cerr << "Unable to open file";
 									ret = RET_UNABLE_TO_WRITE;
 								}
 							}
 						}
-						else cout << repocontent << endl;
+						else std::cerr << repocontent << endl;
 					}
 					else
 					{
-						cout << "Repositories file empty or bad repository list" << endl;
+						std::cerr << "Repositories file empty or bad repository list" << endl;
 						ret = RET_BAD_REPOSITORY_LIST;
 					}
 				}
 				else
 				{
-					cout << "File doesn't exists or it is not a file" << endl;
+					std::cerr << "File doesn't exists or it is not a file" << endl;
 					ret = RET_FILE_NOT_FOUND;
 				}
 			}
@@ -226,26 +235,27 @@ int main(int argc, char **argv)
 	}
 	catch(po::error err)
 	{
-		cout << err.what() << endl;
+		std::cerr << err.what() << endl;
 		ret = RET_BOOST_PARSING_ERROR;
 	}
 	catch(Poco::FileNotFoundException fnfe)
 	{
-		cout << fnfe.what() << endl;
+		std::cerr << fnfe.what() << endl;
 		ret = RET_FILE_NOT_FOUND;
 	}
 	catch(std::bad_exception bex)
 	{
-		cout << bex.what() << endl;
+		std::cerr << bex.what() << endl;
 		ret = RET_EXCEPTION_UNCAUGHT;
 	}
 	catch(...)
 	{
-		cout << "Oops! Something wrong, and I don't know why. Sorry." << endl;
+		std::cerr << "Oops! Something wrong, and I don't know why. Sorry." << endl;
 		ret = RET_GENERIC_ERROR;
 	}
 
-	if(utils.verbose) cout << "Exited with return code " << ret << endl;
+	if (ret > 0) std::cerr << "Exited with return code " << ret << endl;
+	else cout << "Exited with return code " << ret << endl;
 
 	return ret;
 }

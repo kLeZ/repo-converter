@@ -38,7 +38,7 @@ string Version::getVersionString()
 	__min = utils.itos(MINOR_VERSION);
 	__pat = utils.itos(PATCH_VERSION);
 	File comm("/proc/self/comm");
-	ifstream scanner(comm.path().c_str(), ios::out);
+	ifstream scanner(comm.path().c_str());
 	getline(scanner, execname);
 
 	ret = ret.append(execname).append(" ");

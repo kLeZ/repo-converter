@@ -27,7 +27,6 @@
 
 #include "utils.h"
 
-using namespace freax::libzypp;
 
 string Utils::convertBool(bool b)
 {
@@ -134,7 +133,7 @@ bool Utils::isValid(URI uri)
 
 	curl_easy_setopt(curl, CURLOPT_URL, uri.toString().c_str());
 
-	if(verbose) curl_easy_setopt(curl, CURLOPT_VERBOSE, true);
+	if(curl_verbose) curl_easy_setopt(curl, CURLOPT_VERBOSE, true);
 
 	retcode = curl_easy_perform(curl);
 	ret = retcode == 0;

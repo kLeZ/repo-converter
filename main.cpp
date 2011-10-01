@@ -11,6 +11,7 @@
 #include "repository.h"
 #include "utils.h"
 #include "version.h"
+#include "options.h"
 
 
 const int RET_OK = 0;
@@ -31,48 +32,28 @@ int main(int argc, char **argv)
 	int ret = RET_OK;
 	Utils utils;
 
-	po::options_description generic("Generic options");
-	generic.add_options()
-	("help,h", "Prints this help and exits")
-	("version,V", "Prints the software version information and exits");
-
-	po::options_description switches("Switch options");
-	switches.add_options()
-	("not-validate-urls,u", "Don't validate the urls in the repository file, nor the converted ones")
-	("debug,d", "Debug messages are printed in standard output")
-	("verbose,v", "Verbose output will be displayed, this does not affect eventual stdout option")
-	("stdout,s", "Prints the resulting .repo file to std out instead of a file");
-
-	po::options_description values("Value options");
-	values.add_options()
-	("file-repo,f", po::value<string>()->required(), "Path and file name of the exported .repo file\n"
-		"To export a .repo file with zypper execute the following command: zypper lr -e [file.repo]")
-	("current,c", po::value<string>()->required(), "The current version of your openSuSE distribution")
-	("next,n", po::value<string>()->required(), "The new version of your openSuSE distribution");
-
 	try
 	{
-		po::variables_map vm;
-		po::options_description all("All options");
-		all.add(generic).add(switches).add(values);
-		po::store(po::parse_command_line(argc, argv, all), vm);
+		options opts;
+		opts.initOptions();
+		
+		opts.parseCommandLine(argc, argv);
 
-		if(vm.empty())
+		if(opts.empty())
 		{
 			version.printVersion();
-			cout << all << endl;
+			cout << opts << endl;
 		}
 		else
 		{
 			string path, prev_ver, foll_ver;
-			bool validateurls, tofile, showhelp, showversion;
+			bool validateurls, tofile, showhelp, showversion, backup;
 
-			showhelp = vm.count("help");
-			showversion = vm.count("version");
-			tofile = !vm.count("stdout");
-			validateurls = !vm.count("not-validate-urls");
-			utils.debug = vm.count("debug");
-			utils.verbose = vm.count("verbose");
+			showhelp = opts.getOption<bool>("help");
+			showversion = opts.getOption<bool>("version");
+			tofile = !opts.getOption<bool>("stdout");
+			validateurls = !opts.getOption<bool>("not-validate-urls");
+			backup = opts.getOption<bool>("backup");
 
 			if(vm.count("file-repo")) path = vm["file-repo"].as<string>();
 
@@ -120,6 +101,10 @@ int main(int argc, char **argv)
 						int done = 0;
 
 						if(utils.verbose) cout << "Total repositories found: " << repositories->size() << endl;
+
+						if(utils.verbose && validateurls) cout << "New urls has to be verified later!" << endl;
+
+						if(utils.verbose && validateurls) cout << "New urls has to be verified later!" << endl;
 
 						for(int i = 0; i < repositories->size(); i++)
 						{
@@ -173,11 +158,7 @@ int main(int argc, char **argv)
 							{
 								repository.setBaseurl(newuri);
 								repocontent = repocontent.append(repository.toString());
-								repocontent = repocontent.append("\n").append("\n").append("\n");
-								done++;
-
-								if(utils.verbose) cout << "New urls has to be verified later!" << endl;
-							}
+								repocontent = repocontent.append("\n").append("\n").append("\n");							}
 						}
 
 						if(utils.verbose) cout << "Number of repositories that can be written: " << done << endl;
@@ -186,9 +167,13 @@ int main(int argc, char **argv)
 						{
 							if(!repocontent.empty())
 							{
-								string bakpath = path;
-								bakpath.append("~");
-								repo->renameTo(bakpath);
+								if (backup)
+								{
+									string bakpath = path;
+									bakpath.append("~");
+									repo->renameTo(bakpath);
+								}
+								else repo->remove();
 								delete repo;
 
 								if(utils.verbose) cout << "Writing the new repository file to " << path << endl;

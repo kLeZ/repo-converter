@@ -33,8 +33,6 @@ namespace freax
 		class Utils
 		{
 			public:
-				bool debug;
-				bool verbose;
 				string convertBool(bool b);
 				vector<Repository> *getRepositories(File *repo);
 				bool isValid(URI uri);

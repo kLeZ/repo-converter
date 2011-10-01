@@ -17,7 +17,7 @@ class Version
 {
 	public:
 		static const int MAJOR_VERSION = 0;
-		static const int MINOR_VERSION = 1;
+		static const int MINOR_VERSION = 2;
 		static const int PATCH_VERSION = 0;
 		void printVersion();
 		string getVersionString();

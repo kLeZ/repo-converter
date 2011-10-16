@@ -39,15 +39,15 @@ int main(int argc, char **argv)
 			string path, prev_ver, foll_ver;
 			bool validateurls, tofile, showhelp, showversion, backup;
 
-			showhelp = opts.getBOption(enums::help);
-			showversion = opts.getBOption(enums::version);
-			tofile = !opts.getBOption(enums::stdout);
-			validateurls = !opts.getBOption(enums::not_validate_urls);
-			backup = opts.getBOption(enums::backup);
+			showhelp = opts.getFlagOption(enums::help);
+			showversion = opts.getFlagOption(enums::version);
+			tofile = !opts.getFlagOption(enums::stdout);
+			validateurls = !opts.getFlagOption(enums::not_validate_urls);
+			backup = opts.getFlagOption(enums::backup);
 
-			path = opts.getSOption(enums::file_repo);
-			prev_ver = opts.getSOption(enums::current);
-			foll_ver = opts.getSOption(enums::next);
+			path = opts.getValueOption(enums::file_repo);
+			prev_ver = opts.getValueOption(enums::current);
+			foll_ver = opts.getValueOption(enums::next);
 
 			if(showhelp)
 			{

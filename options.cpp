@@ -68,46 +68,7 @@ bool options::empty()
 	return vm.empty();
 }
 
-/*
-template <class T>
-T options::getOption(enums::option op)
-{
-	T ret;
-	switch (op)
-	{
-		case (enums::help):
-			ret = vm.count("help");
-			break;
-		case (enums::version):
-			ret = vm.count("version");
-			break;
-		case (enums::stdout):
-			ret = vm.count("stdout");
-			break;
-		case (enums::not_validate_urls):
-			ret = vm.count("not-validate-urls");
-			break;
-		case (enums::backup):
-			ret = vm.count("backup");
-			break;
-		case (enums::file_repo):
-			if (vm.count("file-repo"))
-				ret = vm["file-repo"].as<string>();
-			break;
-		case (enums::current):
-			if (vm.count("current"))
-				ret = vm["current"].as<string>();
-			break;
-		case (enums::next):
-			if (vm.count("next"))
-				ret = vm["next"].as<string>();
-			break;
-	}
-	return ret;
-}
-*/
-
-bool options::getBOption(enums::option op)
+bool options::getFlagOption(enums::option op)
 {
 	bool ret;
 	switch (op)
@@ -131,7 +92,7 @@ bool options::getBOption(enums::option op)
 	return ret;
 }
 
-string options::getSOption(enums::option op)
+string options::getValueOption(enums::option op)
 {
 	string ret;
 	switch (op)

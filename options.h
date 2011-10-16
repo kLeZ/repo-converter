@@ -61,10 +61,8 @@ namespace freax
 				void parseCommandLine(int argc, char **argv);
 				void notify();
 
-				//template <class T>
-				//T getOption(freax::libzypp::enums::option op);
-				bool getBOption(freax::libzypp::enums::option op);
-				string getSOption(freax::libzypp::enums::option op);
+				bool getFlagOption(freax::libzypp::enums::option op);
+				string getValueOption(freax::libzypp::enums::option op);
 
 				bool empty();
 				enums::verbosity verbosityLevel();

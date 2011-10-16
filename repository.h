@@ -20,17 +20,17 @@
 #ifndef REPOSITORY_H
 #define REPOSITORY_H
 
-#include <Poco/URI.h>
-#include <Poco/File.h>
+#include "utils.h"
+
+
+using namespace std;
+using namespace Poco;
 
 
 namespace freax
 {
 	namespace libzypp
 	{
-		using namespace std;
-		using namespace Poco;
-
 		class Repository
 		{
 			private:
@@ -72,6 +72,8 @@ namespace freax
 				/* Others */
 				string toString();
 		};
+
+		vector<Repository> *getRepositories(File *repo);
 	}
 }
 

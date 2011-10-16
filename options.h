@@ -21,7 +21,8 @@
 #define OPTIONS_H
 
 #include <boost/program_options.hpp>
-#include <ostream>
+
+#include "utils.h"
 
 
 using namespace std;
@@ -31,48 +32,45 @@ namespace freax
 {
 	namespace libzypp
 	{
-		enum verbosity
+		namespace enums
 		{
-			quiet = 0,
-			verbose = 1,
-			very_verbose = 2,
-			debug = 3
-		};
-
-		enum option
-		{
-			help = 0,
-			version = 1,
-			stdout = 2,
-			not_validate_urls = 3,
-			backup = 4,
-			file_repo = 5,
-			current = 6,
-			next = 7
-		};
+			enum option
+			{
+				help = 0,
+				version = 1,
+				stdout = 2,
+				not_validate_urls = 3,
+				backup = 4,
+				file_repo = 5,
+				current = 6,
+				next = 7
+			};
+		}
 
 		class options
 		{
+			friend ostream & operator << (ostream &, const options &);
+
 			private:
 				bool debug;
 				bool verbose;
 				bool curl_verbose;
-				po::options_description all;
 				po::variables_map vm;
+				po::options_description all;
 
 			public:
 				void initOptions();
 				void parseCommandLine(int argc, char **argv);
 				void notify();
 
-				template <class T> T getOption(option op);
-
-				friend ostream& operator<<(ostream& output, const options& p);
+				template <typename T>
+				T getOption(freax::libzypp::enums::option op);
 
 				bool empty();
-				verbosity verbosityLevel();
+				enums::verbosity verbosityLevel();
 		};
 	}
 }
 
 #endif // OPTIONS_H
+

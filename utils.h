@@ -21,20 +21,43 @@
 #define FREAX_LIBZYPP_UTILS_H
 
 
-#include "repository.h"
+#include <ios>
+#include <sstream>
+#include <fstream>
+#include <ostream>
+#include <iostream>
+#include <stdlib.h>
+#include <curl/curl.h>
+#include <Poco/File.h>
+#include <Poco/Exception.h>
+#include <Poco/URI.h>
+
+
+using namespace std;
+using namespace Poco;
 
 
 namespace freax
 {
 	namespace libzypp
 	{
-		using namespace std;
+		namespace enums
+		{
+			enum verbosity
+			{
+				quiet = 0,
+				verbose = 1,
+				very_verbose = 2,
+				debug = 3
+			};
+		}
 
 		class Utils
 		{
 			public:
+				enums::verbosity verbosityLevel;
+
 				string convertBool(bool b);
-				vector<Repository> *getRepositories(File *repo);
 				bool isValid(URI uri);
 				URI changeVersionUrl(URI current, string curr_ver, string next_ver);
 				string changeVersionToken(string current, string curr_ver, string next_ver);

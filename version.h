@@ -1,11 +1,6 @@
 #ifndef VERSION_H
 #define VERSION_H
 
-#include <ios>
-#include <sstream>
-#include <fstream>
-#include <iostream>
-#include <Poco/File.h>
 
 #include "utils.h"
 
@@ -25,15 +20,15 @@ class Version
 
 void Version::printVersion()
 {
-	cout << version.getVersionString() << endl;
+	cout << this->getVersionString() << endl;
 }
 
 string Version::getVersionString()
 {
-	Utils utils;
 	string ret, __maj, __min, __pat, execname;
 	char* execlnk;
 
+	Utils utils;
 	__maj = utils.itos(MAJOR_VERSION);
 	__min = utils.itos(MINOR_VERSION);
 	__pat = utils.itos(PATCH_VERSION);

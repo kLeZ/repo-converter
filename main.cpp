@@ -1,13 +1,3 @@
-#include <ios>
-#include <sstream>
-#include <fstream>
-#include <iostream>
-#include <Poco/File.h>
-#include <Poco/Exception.h>
-#include <Poco/URI.h>
-#include <boost/program_options.hpp>
-#include <curl/curl.h>
-
 #include "repository.h"
 #include "utils.h"
 #include "version.h"
@@ -22,21 +12,21 @@ const int RET_BOOST_PARSING_ERROR = 4;
 const int RET_EXCEPTION_UNCAUGHT = 98;
 const int RET_GENERIC_ERROR = 99;
 
+
 using namespace std;
 using namespace Poco;
 using namespace freax::libzypp;
-namespace po = boost::program_options;
+
 
 int main(int argc, char **argv)
 {
 	int ret = RET_OK;
-	Utils utils;
 
 	try
 	{
+		Utils utils;
 		options opts;
 		opts.initOptions();
-		
 		opts.parseCommandLine(argc, argv);
 
 		if(opts.empty())
@@ -49,22 +39,19 @@ int main(int argc, char **argv)
 			string path, prev_ver, foll_ver;
 			bool validateurls, tofile, showhelp, showversion, backup;
 
-			showhelp = opts.getOption<bool>("help");
-			showversion = opts.getOption<bool>("version");
-			tofile = !opts.getOption<bool>("stdout");
-			validateurls = !opts.getOption<bool>("not-validate-urls");
-			backup = opts.getOption<bool>("backup");
+			showhelp = opts.getOption<bool>(enums::help);
+			showversion = opts.getOption<bool>(enums::version);
+			tofile = !opts.getOption<bool>(enums::stdout);
+			validateurls = !opts.getOption<bool>(enums::not_validate_urls);
+			backup = opts.getOption<bool>(enums::backup);
 
-			if(vm.count("file-repo")) path = vm["file-repo"].as<string>();
-
-			if(vm.count("current")) prev_ver = vm["current"].as<string>();
-
-			if(vm.count("next")) foll_ver = vm["next"].as<string>();
-
+			path = opts.getOption<string>(enums::file_repo);
+			prev_ver = opts.getOption<string>(enums::current);
+			foll_ver = opts.getOption<string>(enums::next);
 
 			if(showhelp)
 			{
-				cout << all << endl;
+				cout << opts << endl;
 			}
 			else if(showversion)
 			{
@@ -72,39 +59,43 @@ int main(int argc, char **argv)
 			}
 			else
 			{
-				po::notify(vm);
+				opts.notify();
 
 				if(validateurls) utils.curlInit();
 
-				if(utils.verbose)
+				if(opts.verbosityLevel() >= enums::verbose)
 				{
 					cout << "Repository File: " << path << endl;
 					cout << "Current version: " << prev_ver << endl;
 					cout << "Next version: " << foll_ver << endl;
-					cout << "Debug mode: " << (utils.debug ? "On" : "Off") << endl;
+					cout << "Debug mode: " << (opts.verbosityLevel() == enums::debug ? "On" : "Off") << endl;
 					cout << "Print to stdout: " << (tofile ? "No" : "Yes") << endl;
 					cout << "Use CURL: " << (validateurls ? "Yes" : "No") << endl;
-					cout << "Be Verbose: " << (utils.verbose ? "Yes" : "No") << endl;
+					cout << "Be Verbose: " << (opts.verbosityLevel() == enums::verbose ? "Yes" : "No") << endl;
 				}
 
 				File *repo = new File(path);
 
 				if(repo->isFile() && repo->exists())
 				{
-					if(utils.debug) cout << "Repository file exists! and has a size of " << repo->getSize() << " b" << endl;
+					if(opts.verbosityLevel() >= enums::debug)
+						cout << "Repository file exists! and has a size of " << repo->getSize() << " b" << endl;
 
-					vector<Repository> *repositories = utils.getRepositories(repo);
+					vector<Repository> *repositories = freax::libzypp::getRepositories(repo);
 
 					if(!repositories->empty())
 					{
 						string repocontent = "";
 						int done = 0;
 
-						if(utils.verbose) cout << "Total repositories found: " << repositories->size() << endl;
+						if(opts.verbosityLevel() >= enums::verbose)
+							cout << "Total repositories found: " << repositories->size() << endl;
 
-						if(utils.verbose && validateurls) cout << "New urls has to be verified later!" << endl;
+						if(opts.verbosityLevel() >= enums::verbose && validateurls)
+							cout << "New urls has to be verified later!" << endl;
 
-						if(utils.verbose && validateurls) cout << "New urls has to be verified later!" << endl;
+						if(opts.verbosityLevel() >= enums::verbose && validateurls)
+							cout << "New urls has to be verified later!" << endl;
 
 						for(int i = 0; i < repositories->size(); i++)
 						{
@@ -115,7 +106,7 @@ int main(int argc, char **argv)
 
 							if(validateurls)
 							{
-								if(utils.verbose)
+								if(opts.verbosityLevel() >= enums::verbose)
 								{
 									cout << "Checking repository '" << repository.getName();
 									cout << "' with url '" << repository.getBaseurl().toString() << "'" << endl;
@@ -123,7 +114,7 @@ int main(int argc, char **argv)
 
 								if(utils.isValid(repository.getBaseurl()))
 								{
-									if(utils.verbose)
+									if(opts.verbosityLevel() >= enums::verbose)
 									{
 										cout << "Url seems to be valid, changing to next version and checking again" << endl;
 										cout << "Checking new version url '" << newuri.toString() << "'..." << endl;
@@ -131,7 +122,7 @@ int main(int argc, char **argv)
 
 									if(utils.isValid(newuri))
 									{
-										if(utils.verbose)
+										if(opts.verbosityLevel() >= enums::verbose)
 											cout << "Next version url is valid, so can add the repository" << endl;
 
 										repository.setBaseurl(newuri);
@@ -141,7 +132,7 @@ int main(int argc, char **argv)
 									}
 									else
 									{
-										if(utils.verbose)
+										if(opts.verbosityLevel() >= enums::verbose)
 										{
 											cout << "Current version has that repository but, unfortunately,";
 											cout << " seems that the new version repository doesn't exists" << endl;
@@ -150,7 +141,7 @@ int main(int argc, char **argv)
 								}
 								else
 								{
-									if(utils.verbose)
+									if(opts.verbosityLevel() >= enums::verbose)
 										std::cerr << "Current url seems not to be valid, am I wrong in something?" << endl;
 								}
 							}
@@ -158,40 +149,50 @@ int main(int argc, char **argv)
 							{
 								repository.setBaseurl(newuri);
 								repocontent = repocontent.append(repository.toString());
-								repocontent = repocontent.append("\n").append("\n").append("\n");							}
+								repocontent = repocontent.append("\n").append("\n").append("\n");
+							}
 						}
 
-						if(utils.verbose) cout << "Number of repositories that can be written: " << done << endl;
+						if(opts.verbosityLevel() >= enums::verbose)
+							cout << "Number of repositories that can be written: " << done << endl;
 
 						if(tofile)
 						{
 							if(!repocontent.empty())
 							{
-								if (backup)
+								if(backup)
 								{
 									string bakpath = path;
 									bakpath.append("~");
 									repo->renameTo(bakpath);
 								}
 								else repo->remove();
+
 								delete repo;
 
-								if(utils.verbose) cout << "Writing the new repository file to " << path << endl;
+								if(opts.verbosityLevel() >= enums::verbose)
+									cout << "Writing the new repository file to " << path << endl;
 
 								ofstream newrepo(path.c_str());
 
-								if (utils.debug) cout << "New repo file status: " << newrepo.is_open() << endl;
+								if(opts.verbosityLevel() >= enums::debug)
+									cout << "New repo file status: " << newrepo.is_open() << endl;
 
 								if(newrepo.is_open())
 								{
-									if (utils.debug) cout << "Number of characters of repocontent: " << repocontent.size() << endl;
+									if(opts.verbosityLevel() >= enums::debug)
+										cout << "Number of characters of repocontent: " << repocontent.size() << endl;
 
 									newrepo << repocontent << endl;
 									newrepo.flush();
-									if (utils.debug) cout << "newrepo stream is bad: " << newrepo.bad() << endl;
+
+									if(opts.verbosityLevel() >= enums::debug)
+										cout << "newrepo stream is bad: " << newrepo.bad() << endl;
+
 									newrepo.close();
 
-									if(utils.verbose) cout << "Congratulations! All done, now exiting..." << endl;
+									if(opts.verbosityLevel() >= enums::verbose)
+										cout << "Congratulations! All done, now exiting..." << endl;
 								}
 								else
 								{
@@ -200,7 +201,7 @@ int main(int argc, char **argv)
 								}
 							}
 						}
-						else std::cerr << repocontent << endl;
+						else std::cout << repocontent << endl;
 					}
 					else
 					{
@@ -239,7 +240,7 @@ int main(int argc, char **argv)
 		ret = RET_GENERIC_ERROR;
 	}
 
-	if (ret > 0) std::cerr << "Exited with return code " << ret << endl;
+	if(ret > 0) std::cerr << "Exited with return code " << ret << endl;
 	else cout << "Exited with return code " << ret << endl;
 
 	return ret;

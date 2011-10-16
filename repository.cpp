@@ -17,7 +17,6 @@
 */
 
 #include "repository.h"
-#include "utils.h"
 
 using namespace freax::libzypp;
 
@@ -149,4 +148,84 @@ string Repository::toString()
 	builder.append(utils.convertBool(this->gpgcheck));
 	builder.append("\n");
 	return builder;
+}
+
+vector<Repository> *getRepositories(File *repo)
+{
+	vector<Repository> *ret = new vector<Repository>();
+	Utils utils;
+	ifstream scanner(repo->path().c_str());
+	
+	if(utils.verbosityLevel >= enums::debug)
+		std::cout << "Scanner status: " << scanner.is_open() << std::endl;
+	
+	string line;
+	Repository *current = NULL;
+	
+	while(getline(scanner, line))
+	{
+		if(utils.verbosityLevel >= enums::debug)
+			std::cout << line << endl;
+		
+		if(line[0] == '[')
+		{
+			line = line.substr(1, line.size() - 2);
+			
+			if(utils.verbosityLevel >= enums::debug) std::cout << "Trimmed title: " << line << endl;
+			
+			if(current)
+			{
+				ret->push_back(*current);
+				
+				if(utils.verbosityLevel >= enums::debug)
+					std::cout << "Elements are now " << ret->size() << "\n" << "Just pushed:\n" << current->toString() << endl;
+			}
+			
+			current = new Repository(line);
+		}
+		else if(!line.empty())
+		{
+			size_t eqIndex = line.find_first_of('=');
+			string key, value;
+			key = line.substr(0, eqIndex);
+			value = line.substr(eqIndex + 1);
+			
+			if(utils.verbosityLevel >= enums::debug)
+				std::cout << "Key is " << key << " and value is " << value << endl;
+			
+			if(key == "name")
+			{
+				current->setName(value);
+			}
+			else if(key == "enabled")
+			{
+				current->setEnabled(atoi(value.c_str()));
+			}
+			else if(key == "autorefresh")
+			{
+				current->setAutorefresh(atoi(value.c_str()));
+			}
+			else if(key == "baseurl")
+			{
+				current->setBaseurl(*(new URI(value)));
+			}
+			else if(key == "path")
+			{
+				current->setPath(*(new File(value)));
+			}
+			else if(key == "type")
+			{
+				current->setType(value);
+			}
+			else if(key == "keeppackages")
+			{
+				current->setKeeppackages(atoi(value.c_str()));
+			}
+			else if(key == "gpgcheck")
+			{
+				current->setGpgcheck(atoi(value.c_str()));
+			}
+		}
+	}
+	return ret;
 }

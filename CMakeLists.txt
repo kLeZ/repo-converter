@@ -10,7 +10,7 @@ set_property(TARGET libPocoFoundation PROPERTY IMPORTED_LOCATION /usr/lib64/libP
 set_property(TARGET libcurl PROPERTY IMPORTED_LOCATION /usr/lib64/libcurl.so)
 set_property(TARGET libboost_program_options PROPERTY IMPORTED_LOCATION /usr/lib64/libboost_program_options.so.1.42.0)
 
-add_executable(repo-converter utils.cpp repository.cpp main.cpp)
+add_executable(repo-converter utils.cpp repository.cpp main.cpp options.cpp)
 
 target_link_libraries(repo-converter libPocoFoundation)
 target_link_libraries(repo-converter libcurl)

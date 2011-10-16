@@ -49,8 +49,6 @@ namespace freax
 
 		class options
 		{
-			friend ostream & operator << (ostream &, const options &);
-
 			private:
 				bool debug;
 				bool verbose;
@@ -63,11 +61,15 @@ namespace freax
 				void parseCommandLine(int argc, char **argv);
 				void notify();
 
-				template <typename T>
-				T getOption(freax::libzypp::enums::option op);
+				//template <class T>
+				//T getOption(freax::libzypp::enums::option op);
+				bool getBOption(freax::libzypp::enums::option op);
+				string getSOption(freax::libzypp::enums::option op);
 
 				bool empty();
 				enums::verbosity verbosityLevel();
+
+				friend ostream& operator<< (ostream &out, options &opts);
 		};
 	}
 }

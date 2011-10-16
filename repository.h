@@ -71,9 +71,9 @@ namespace freax
 
 				/* Others */
 				string toString();
-		};
 
-		vector<Repository> *getRepositories(File *repo);
+				static vector<Repository> *getRepositories(File *repo);
+		};
 	}
 }
 

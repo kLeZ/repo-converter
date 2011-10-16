@@ -150,7 +150,7 @@ string Repository::toString()
 	return builder;
 }
 
-vector<Repository> *getRepositories(File *repo)
+vector<Repository> *Repository::getRepositories(File *repo)
 {
 	vector<Repository> *ret = new vector<Repository>();
 	Utils utils;

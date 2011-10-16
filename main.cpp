@@ -39,15 +39,15 @@ int main(int argc, char **argv)
 			string path, prev_ver, foll_ver;
 			bool validateurls, tofile, showhelp, showversion, backup;
 
-			showhelp = opts.getOption<bool>(enums::help);
-			showversion = opts.getOption<bool>(enums::version);
-			tofile = !opts.getOption<bool>(enums::stdout);
-			validateurls = !opts.getOption<bool>(enums::not_validate_urls);
-			backup = opts.getOption<bool>(enums::backup);
+			showhelp = opts.getBOption(enums::help);
+			showversion = opts.getBOption(enums::version);
+			tofile = !opts.getBOption(enums::stdout);
+			validateurls = !opts.getBOption(enums::not_validate_urls);
+			backup = opts.getBOption(enums::backup);
 
-			path = opts.getOption<string>(enums::file_repo);
-			prev_ver = opts.getOption<string>(enums::current);
-			foll_ver = opts.getOption<string>(enums::next);
+			path = opts.getSOption(enums::file_repo);
+			prev_ver = opts.getSOption(enums::current);
+			foll_ver = opts.getSOption(enums::next);
 
 			if(showhelp)
 			{
@@ -81,7 +81,7 @@ int main(int argc, char **argv)
 					if(opts.verbosityLevel() >= enums::debug)
 						cout << "Repository file exists! and has a size of " << repo->getSize() << " b" << endl;
 
-					vector<Repository> *repositories = freax::libzypp::getRepositories(repo);
+					vector<Repository> *repositories = Repository::getRepositories(repo);
 
 					if(!repositories->empty())
 					{
